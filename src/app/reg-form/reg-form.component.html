@@ -1,0 +1,100 @@
+<form 
+  class="border rounded-3 p-3"
+  style="width: 20%; min-width: 480px;"
+  (ngSubmit)="onSubmit()"
+  [formGroup]="regForm">
+
+  <!-- Name form group  -->
+  <div class="form-group" formGroupName="name">
+
+    <!-- first name form control  -->
+    <div class="form-group my-2">
+      <label for="first-name" class="form-label">First Name</label>
+      <input 
+        type="text" 
+        id="first-name" 
+        class="form-control" 
+        formControlName="fName">
+        <span
+          *ngIf="regForm.get('name.fName').touched && regForm.get('name.fName').invalid"
+          class="form-text text-danger">
+          <span class="d-block" *ngIf="regForm.get('name.fName')?.errors['required']">Firstname can't be empty.</span>
+          <span class="d-block" *ngIf="regForm.get('name.fName')?.errors['forbiddenFirstName']">Forbiden name. Choose something else.</span>
+          <span class="d-block" *ngIf="regForm.get('name.fName')?.errors['firstNameLengthError']">First name length must be greater than last name.</span>
+        </span>
+    </div>
+
+    <!-- last name form control  -->
+    <div class="form-group my-2">
+      <label for="last-name" class="form-label">Last Name</label>
+      <input 
+        type="text" 
+        id="last-name" 
+        class="form-control" 
+        formControlName="lName">
+        <span
+          *ngIf="regForm.get('name.lName').touched && regForm.get('name.lName').invalid"
+          class="form-text text-danger">
+          <span class="d-block" *ngIf="regForm.get('name.lName')?.errors['required']">Lastname can't be empty.</span>
+        </span>
+    </div>
+
+  </div>
+
+  <!-- email form control  -->
+  <div class="form-group my-2">
+
+    <label for="user-email" class="form-label">Email</label>
+    <input 
+      type="email" 
+      id="user-email" 
+      class="form-control" 
+      formControlName="email">
+    <span 
+      *ngIf="regForm.get('email').touched && regForm.get('email').invalid"
+      class="form-text text-danger">
+      <span class="d-block" *ngIf="regForm.get('email')?.errors['required']">Email is required</span>
+      <span class="d-block" *ngIf="regForm.get('email')?.errors['email']">Email is incorrect. E.g: user@domail.com</span>
+      <span class="d-block" *ngIf="regForm.get('email')?.errors['forbiddenEmail']">Email is forbidden. Choose another one.</span>
+    </span>
+  </div>
+
+  <!-- gender radio form control  -->
+  <div class="form-group my-2">
+
+    <label class="form-label d-block">Gender</label>
+    <div 
+      class="form-check form-check-inline"
+      *ngFor="let g of genders; let i = index">
+      <input 
+        type="radio" 
+        class="form-check-input"
+        formControlName="gender" 
+        [value]="g">
+      <label for="" class="form-check-label">{{ g[0].toUpperCase()+g.substr(1) }}</label>
+    </div>
+
+  </div>
+
+  <!-- add interested button  -->
+  <button type="button" class="btn btn-primary mt-2" (click)="onAddInterest()">Add Interest</button>
+
+  <!-- interest form array  -->
+  <div class="form-group my-2" formArrayName="interests">
+
+    <input
+      *ngFor="let interest of interests.controls; let i = index" 
+      type="text" 
+      [formControlName]="i"
+      class="form-control my-1">
+
+  </div>
+
+  <div class="d-grid my-4">
+    <input type="submit" class="btn btn-success" value="Register">
+  </div>
+
+  <button type="button" class="btn btn-warning m-2" (click)="onClear()">Clear Form</button>
+  <button type="button" class="btn btn-info m-2" (click)="onSuggestUserName()">Suggest Username</button>
+
+</form>
