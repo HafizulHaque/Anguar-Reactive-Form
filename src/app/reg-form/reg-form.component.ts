@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormArray, FormBuilder, FormControl, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
 
 @Component({
@@ -19,17 +19,30 @@ export class RegFormComponent implements OnInit {
   constructor(private fb: FormBuilder) { }
 
   ngOnInit(): void {
+
     this.regForm = this.fb.group({
       name : this.fb.group({
-        fName: ['', [Validators.required, this.validateForbiddenFirstName.bind(this), this.validateFirstNameGreaterThanLastName.bind(this)]],
-        lName: ['', [Validators.required]]
-      }),
+        fName: ['', [Validators.required, this.validateForbiddenFirstName.bind(this)]],
+        lName: ['', [Validators.required, Validators.minLength(4)]]
+      }, {validator: this.validateNamesLength.bind(this)}),
       email: ['', [Validators.required, Validators.email], [this.validateForbiddenEmail.bind(this)]],
       gender: ['male', [Validators.required]],
       interests: this.fb.array([
         // this.fb.control([''])
       ])
+    });
+
+    // subscribe to valueChange event 
+    this.regForm.valueChanges.subscribe((value: any) => {
+      console.log(value);
     })
+
+    // subscribe to statusChanges event 
+    this.regForm.statusChanges.subscribe((status: any) => {
+      console.log(status);
+    })
+
+    
   }
 
   get interests(){
@@ -40,12 +53,13 @@ export class RegFormComponent implements OnInit {
     this.interests.push(this.fb.control('', [Validators.required]));
   }
 
-  validateFirstNameGreaterThanLastName(control: FormControl): {[key: string]: boolean} | null {
+  validateNamesLength(control: FormControl): {[key: string]: boolean} | null {
 
-    let lastNameControl = this.regForm?.get('name.lName')
-    let lastNameLen = lastNameControl ? lastNameControl.value.length : 0;
-    let firstNameLen = control ? control.value.length : 0;
-    if(firstNameLen>lastNameLen) return null;
+    let firstNameControl = control.get('fName')
+    let lastNameControl = control.get('lName')
+    let firstNameLen = firstNameControl?.value ? firstNameControl.value.length : 0;
+    let lastNameLen = lastNameControl?.value ? lastNameControl.value.length : 0;
+    if(firstNameLen>=lastNameLen) return null;
     else return {'firstNameLengthError': true};
   }
 
@@ -74,6 +88,7 @@ export class RegFormComponent implements OnInit {
   }
 
   onClear(){
+    while(this.interests.length) this.interests.clear();
     this.regForm.reset();
   }
 

@@ -1,6 +1,7 @@
 <form 
   class="border rounded-3 p-3"
   style="width: 20%; min-width: 480px;"
+  autocomplete="off"
   (ngSubmit)="onSubmit()"
   [formGroup]="regForm">
 
@@ -16,11 +17,11 @@
         class="form-control" 
         formControlName="fName">
         <span
-          *ngIf="regForm.get('name.fName').touched && regForm.get('name.fName').invalid"
+          *ngIf="regForm.get('name.fName').touched && (regForm.get('name.fName').invalid || regForm.get('name').invalid)"
           class="form-text text-danger">
-          <span class="d-block" *ngIf="regForm.get('name.fName')?.errors['required']">Firstname can't be empty.</span>
-          <span class="d-block" *ngIf="regForm.get('name.fName')?.errors['forbiddenFirstName']">Forbiden name. Choose something else.</span>
-          <span class="d-block" *ngIf="regForm.get('name.fName')?.errors['firstNameLengthError']">First name length must be greater than last name.</span>
+          <span class="d-block" *ngIf="regForm.get('name.fName')?.errors?.['required']">Firstname can't be empty.</span>
+          <span class="d-block" *ngIf="regForm.get('name.fName')?.errors?.['forbiddenFirstName']">Forbiden name. Choose something else.</span>
+          <span class="d-block" *ngIf="regForm.get('name')?.errors?.['firstNameLengthError']">First name length must be greater than last name.</span>
         </span>
     </div>
 
@@ -33,9 +34,12 @@
         class="form-control" 
         formControlName="lName">
         <span
-          *ngIf="regForm.get('name.lName').touched && regForm.get('name.lName').invalid"
+          *ngIf="regForm.get('name.lName').dirty && regForm.get('name.lName').invalid"
           class="form-text text-danger">
-          <span class="d-block" *ngIf="regForm.get('name.lName')?.errors['required']">Lastname can't be empty.</span>
+          <span class="d-block" *ngIf="regForm.get('name.lName')?.errors?.['required']">Lastname can't be empty.</span>
+          <span class="d-block" *ngIf="regForm.get('name.lName')?.errors?.['minlength']">
+            {{ "min length is 4. Enter " + (4-regForm.get('name.lName').errors['minlength'].actualLength) + 'more character'}}
+          </span>
         </span>
     </div>
 
@@ -53,9 +57,9 @@
     <span 
       *ngIf="regForm.get('email').touched && regForm.get('email').invalid"
       class="form-text text-danger">
-      <span class="d-block" *ngIf="regForm.get('email')?.errors['required']">Email is required</span>
-      <span class="d-block" *ngIf="regForm.get('email')?.errors['email']">Email is incorrect. E.g: user@domail.com</span>
-      <span class="d-block" *ngIf="regForm.get('email')?.errors['forbiddenEmail']">Email is forbidden. Choose another one.</span>
+      <span class="d-block" *ngIf="regForm.get('email')?.errors?.['required']">Email is required</span>
+      <span class="d-block" *ngIf="regForm.get('email')?.errors?.['email']">Email is incorrect. E.g: user@domail.com</span>
+      <span class="d-block" *ngIf="regForm.get('email')?.errors?.['forbiddenEmail']">Email is forbidden. Choose another one.</span>
     </span>
   </div>
 
